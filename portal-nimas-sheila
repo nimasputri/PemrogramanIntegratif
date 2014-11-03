@@ -1,0 +1,53 @@
+from bs4 import BeautifulSoup as BS
+import urllib, json
+
+itemList = []
+accessedLinks = []
+def grabImperial(url,base):
+	print 'a'
+	print 'Fetching ' + url
+
+	html = BS(urllib.urlopen(url).read())
+	print "1"
+	for card in html.find_all('td', width="25%"):
+		if (card.a is not None):
+			namaProduk = card.a.get('title')
+			print namaProduk
+			linkProduk = base+card.a.get('href')
+			print linkProduk
+			image = base+card.a.img.get('src')
+			for harga in card.find_all('span',class_='product-price'):
+				hargaProduk = harga.string
+				print hargaProduk
+			brand = url.split('/')[6]
+			cat = brand
+			item = [namaProduk, cat, hargaProduk, linkProduk, image]
+			if item not in itemList :
+				itemList.append(item)
+	
+	#buka page selanjutnya
+	for anchor in html.find_all('a'):
+		href = anchor.get('href')
+		if href.find('http://') == -1:
+			href = base+href
+		if href.find('product_id') != -1 and href not in accessedLinks and href.find('title=') == -1 and ((href.find('halaman=1') == -1 or len(href) > (href.find('halaman=1')+9))):
+			accessedLinks.append(href)			
+			grabScr(href,base,cat)
+
+print '====================================='
+print 'Http://www.imperialdistro.com'
+print '====================================='
+url = 'http://www.imperialdistro.com'
+connection = urllib.urlopen(url)
+html = BS(connection.read())
+for anchor in html.find_all('a'):
+	if anchor.get('href').find('products') !=-1:
+		grabImperial(url+anchor.get('href'),url)
+	if anchor.get('href')=='http://www.imperialdistro.com':
+		break
+
+myjson = json.dumps(itemList)
+with open('data.json', 'w') as datafile:
+	datafile.write(myjson)
+
+
