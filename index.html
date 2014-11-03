@@ -1,0 +1,45 @@
+<html>
+	<head>
+		<title>Distro Crawla</title>
+	</head>
+	<body>
+		<div class="wrapper">
+			<h1><span style="font-family: Calibri; color: #E3526C;">Nimas Putri Asriningtyas - Sheila Hana Fitriani</span></h1>
+			<input id="search" placeholder="Cari produk">
+			<hr>
+			<div id="isi">
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="jquery-1.11.1.min.js"></script>
+	<script>
+
+		var data;
+		$.getJSON("data.json",function(json){
+			var isi = ""
+			data = json;
+			for (x in json){
+				isi = isi+"<div style='display:inline-block; width=30%;font-family: Calibri; color: #7dc7c7; margin:15px'><h3>"+json[x][0]+"</h3><a href='"+json[x][3]+"' target='_blank'><img src='"+json[x][4]+"'></a><hr>"+json[x][1]+"<br>"+json[x][2]+"</div>";
+			}
+
+			$("#isi").html(isi);
+		});
+
+		$("#search").change(function(){
+			var hasilcari = [];
+			cari = $("#search").val();
+			for (x in data){
+				if(data[x][0].search(cari) != -1 || data[x][1].search(cari) != -1 || data[x][2].search(cari) != -1 || data[x][3].search(cari) != -1 || data[x][4].search(cari) != -1){
+					hasilcari.push(data[x]);
+				}
+			}
+			isi = ""
+			for (x in hasilcari){
+				isi = isi+"<div style='display:inline-block; width=30%; margin:15px;font-family: Calibri; color: #7dc7c7;''><h3>"+hasilcari[x][0]+"</h3><a href='"+hasilcari[x][3]+"' target='_blank'><img src='"+hasilcari[x][4]+"'></a><hr>"+hasilcari[x][1]+"<br>"+hasilcari[x][2]+"</div>";
+			}
+
+			$("#isi").html(isi);
+
+		});
+	</script>
+</html>
